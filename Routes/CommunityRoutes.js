@@ -11,6 +11,6 @@ router.get("/:id/members", getCommunityMembers)
 
 router.get("/me/owner",  authorize, getMyOwnedCommunity)
 
-router.get("/:me/members", authorize, getMyJoinedCommunity)
+router.get("/me/members", authorize, getMyJoinedCommunity)
 
 module.exports = router

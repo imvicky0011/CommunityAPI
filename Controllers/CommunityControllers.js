@@ -83,16 +83,18 @@ const CommunityControllers = {
         try {
             const { id } = req.params;
     
+            console.log("given community id, we found all of its members")
             // Query all members of the specified community
-            const members = await Member.find()
+            const members = await Member.find({community: id})
             .populate({
                 path: 'user',
                 select: 'id name', // Specify the fields to retrieve from the 'user' model
             })
-            // .populate({
-            //     path: 'role',
-            //     select: 'id name', // Specify the fields to retrieve from the 'role' model
-            // });
+            .populate({
+                path: 'role',
+                select: 'id name', // Specify the fields to retrieve from the 'role' model
+            });
+
             console.log(members)
             // Prepare the response object
             const response = {
@@ -106,6 +108,7 @@ const CommunityControllers = {
                         community: member.community.toString(), // Convert to string
                         user: {
                             id: member.user,
+                            name: member.user.name
                         },
                         role: {
                             id: member.role,
@@ -128,11 +131,14 @@ const CommunityControllers = {
         try {
             const { userId } = req.params;
     
+            console.log("owned communities")
+            
             // Query all members where the user is a "Community Member"
             const members = await Member.find({
                 user: userId,
                 role: 'Community Admin', // Adjust this based on your role schema
             }).populate('community', 'id name slug'); // Expand the community details
+            
             
             console.log(members)
             
@@ -160,26 +166,35 @@ const CommunityControllers = {
     
     getMyJoinedCommunity: async (req, res) => {
         try {
-            const { userId } = req.params;
+            const { user } = req.user;
 
             // Query all members where the user is a "Community Member"
             const members = await Member.find({
-                user: userId,
-                role: 'Community Member', // Adjust this based on your role schema
-            }).populate('community', 'id name slug'); // Expand the community details
+                user: user,
+                role: '7106780565537227290', // Adjust this based on your role schema
+            })
+            //populate('community', 'id name slug'); // Expand the community details
+            
+            console.log(members)
+            
+            console.log("members")
+            
 
             // Extract the community information from the members
             const communities = members.map((member) => ({
                 id: member.community.id,
                 name: member.community.name,
                 slug: member.community.slug,
-            }));
+            }))
 
+            console.log("communities")
+            
+            console.log(communities)
             // Prepare the response object
             const response = {
                 status: true,
                 content: communities,
-            };
+            }
 
             res.status(200).json(response);
         } catch (err) {

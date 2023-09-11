@@ -1,12 +1,7 @@
 const Member = require("../Models/MemberModel"); // Import your Member model here
-const { Snowflake } = require("@theinternetfolks/snowflake");
 const Community = require("../Models/CommunityModel");
 const User = require("../Models/UserModel");
 
-// Function to generate a Snowflake ID
-const generateSnowflake = () => {
-  return Snowflake.generate();
-};
 
 const MemberControllers = {
   addMember: async (req, res) => {

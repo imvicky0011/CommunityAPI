@@ -1,6 +1,7 @@
-const { Member } = require('../Models/MemberModel'); // Import your Member model here
+const  Member  = require('../Models/MemberModel'); // Import your Member model here
 const { Snowflake } = require('@theinternetfolks/snowflake');
-
+const Community = require("../Models/CommunityModel")
+const User = require("../Models/UserModel")
 // Function to generate a Snowflake ID
 const generateSnowflake = () => {
     return Snowflake.generate();
@@ -8,27 +9,29 @@ const generateSnowflake = () => {
 
 const MemberControllers = {
     addMember: async (req, res) => {
-        const { community, role } = req.body;
-        const user = req.user
+        const { community, role, user } = req.body;
+        const userAdmin = req.user
 
         try {
             // Check if the current user is the owner of the community
             const isOwner = await Community.findOne({
-                _id: community,
+                id: community,
                 owner: req.user, // Assuming you have the user's ID in req.user
             });
-
+            
+            
             if (!isOwner) {
                 return res.status(403).json({
                     status: false,
                     message: "You do not have permission to add a member to this community.",
                 });
             }
-
+            
+            console.log("Found the owner! " + isOwner)
 
 
             // Check if the user to be added exists
-            const existingUser = await User.findById(user);
+            const existingUser = await User.findOne({id : user});
 
             if (!existingUser) {
                 return res.status(404).json({
@@ -39,11 +42,12 @@ const MemberControllers = {
 
             // Create a new member
             const newMember = new Member({
-                id: generateSnowflake(), // Generate a Snowflake ID
                 community,
                 user,
                 role,
             });
+            
+            console.log(newMember)
 
             await newMember.save();
 

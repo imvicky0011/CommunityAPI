@@ -5,6 +5,6 @@ const authorize = require("../middlewares/auth")
 //defining the mapping of the endpoints
 router.post("/", authorize, addMember)
 
-router.delete("/:userId", authorize, deleteMember)
+router.delete("/:id", authorize, deleteMember)
 
 module.exports = router

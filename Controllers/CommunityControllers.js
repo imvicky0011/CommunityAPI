@@ -129,15 +129,15 @@ const CommunityControllers = {
     
     getMyOwnedCommunity: async (req, res) => {
         try {
-            const { userId } = req.params;
+            const userId  = req.user;
     
             console.log("owned communities")
             
-            // Query all members where the user is a "Community Member"
             const members = await Member.find({
                 user: userId,
-                role: 'Community Admin', // Adjust this based on your role schema
-            }).populate('community', 'id name slug'); // Expand the community details
+                role: '7106778751648173236'
+            })
+            .populate('community', 'id name slug')
             
             
             console.log(members)
@@ -166,8 +166,8 @@ const CommunityControllers = {
     
     getMyJoinedCommunity: async (req, res) => {
         try {
-            const { user } = req.user;
-
+            const  user  = req.user;
+            console.log(user)
             // Query all members where the user is a "Community Member"
             const members = await Member.find({
                 user: user,
@@ -177,8 +177,6 @@ const CommunityControllers = {
             
             console.log(members)
             
-            console.log("members")
-            
 
             // Extract the community information from the members
             const communities = members.map((member) => ({
@@ -186,8 +184,6 @@ const CommunityControllers = {
                 name: member.community.name,
                 slug: member.community.slug,
             }))
-
-            console.log("communities")
             
             console.log(communities)
             // Prepare the response object
